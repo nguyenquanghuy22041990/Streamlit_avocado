@@ -16,7 +16,6 @@ from math import sqrt
 from fbprophet import Prophet 
 from fbprophet.plot import add_changepoints_to_plot
 
-import pmdarima as pmd
 from pmdarima import auto_arima
 
 from sklearn.pipeline import Pipeline
