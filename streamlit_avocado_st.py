@@ -16,14 +16,14 @@ from math import sqrt
 from fbprophet import Prophet 
 from fbprophet.plot import add_changepoints_to_plot
 
+import pmdarima as pmd
 from pmdarima import auto_arima
-import pickle
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from math import sqrt
+
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LinearRegression
@@ -76,15 +76,15 @@ train = df_ts.drop(df_ts.index[-10:])
 test = df_ts.drop(df_ts.index[0:-10])
 
 # Build model
-# model = Prophet(yearly_seasonality=True, \
-#             daily_seasonality=False, weekly_seasonality=False)
+model = Prophet(yearly_seasonality=True, \
+            daily_seasonality=False, weekly_seasonality=False)
 
 # # Serialize with Pickle
 # with open('facebook_prophet.pkl', 'wb') as pkl:
 #     pickle.dump(model, pkl)
 
-with open('facebook_prophet.pkl', 'rb') as pkl:
-    model = pickle.load(pkl)
+# with open('facebook_prophet.pkl', 'rb') as pkl:
+#     model = pickle.load(pkl)
 
 model.fit(train)
 
@@ -128,28 +128,28 @@ arima_organic_df.reset_index(drop=True, inplace=True)
 arima_organic_df.set_index('date', inplace=True)
 arima_organic_df.info()
 
-# arima_model = auto_arima(arima_organic_df, start_p=2, d=1, 
-#                         start_q=2, max_p=5,
-#                         max_q=5, start_P=0, D=1, 
-#                         start_Q=0, max_P=5,
-#                         m=52, seasonal=True, 
-#                         error_action='ignore', trace = True, 
-#                         supress_warnings=True, 
-#                         stepwise = True)
+arima_model = auto_arima(arima_organic_df, start_p=2, d=1, 
+                        start_q=2, max_p=5,
+                        max_q=5, start_P=0, D=1, 
+                        start_Q=0, max_P=5,
+                        m=52, seasonal=True, 
+                        error_action='ignore', trace = True, 
+                        supress_warnings=True, 
+                        stepwise = True)
 
 # # Serialize with Pickle
 # with open('arima.pkl', 'wb') as pkl:
 #     pickle.dump(arima_model, pkl)
 
 
-with open('arima.pkl', 'rb') as pkl:
-    arima_model = pickle.load(pkl)
+# with open('arima.pkl', 'rb') as pkl:
+#     arima_model = pickle.load(pkl)
 
 
 arima_train = arima_organic_df[arima_organic_df.index.year < int(2017)]
 arima_test = arima_organic_df[arima_organic_df.index.year >= int(2017)]
 
-# arima_model.fit(arima_train)
+arima_model.fit(arima_train)
 
 # For serialization:
 
@@ -612,22 +612,22 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     conventional_arima_organic_df.set_index('date', inplace=True)
     conventional_arima_organic_df.info()
 
-    # conventional_arima_model = auto_arima(conventional_arima_organic_df, start_p=2, d=1, 
-    #                         start_q=2, max_p=5,
-    #                         max_q=5, start_P=0, D=1, 
-    #                         start_Q=0, max_P=5,
-    #                         m=52, seasonal=True, 
-    #                         error_action='ignore', trace = True, 
-    #                         supress_warnings=True, 
-    #                         stepwise = True)
+    conventional_arima_model = auto_arima(conventional_arima_organic_df, start_p=2, d=1, 
+                            start_q=2, max_p=5,
+                            max_q=5, start_P=0, D=1, 
+                            start_Q=0, max_P=5,
+                            m=52, seasonal=True, 
+                            error_action='ignore', trace = True, 
+                            supress_warnings=True, 
+                            stepwise = True)
 
     # # Serialize with Pickle
     # with open('conventional_arima.pkl', 'wb') as pkl:
     #     pickle.dump(conventional_arima_model, pkl)
 
 
-    with open('conventional_arima.pkl', 'rb') as pkl:
-        conventional_arima_model = pickle.load(pkl)
+    # with open('conventional_arima.pkl', 'rb') as pkl:
+    #     conventional_arima_model = pickle.load(pkl)
 
 
     conventional_arima_train = conventional_arima_organic_df[conventional_arima_organic_df.index.year < int(2017)]
