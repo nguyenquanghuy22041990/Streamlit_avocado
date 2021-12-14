@@ -66,15 +66,15 @@ train = df_ts.drop(df_ts.index[-10:])
 test = df_ts.drop(df_ts.index[0:-10])
 
 # Build model
-# model = Prophet(yearly_seasonality=True, \
-#             daily_seasonality=False, weekly_seasonality=False)
+model = Prophet(yearly_seasonality=True, \
+            daily_seasonality=False, weekly_seasonality=False)
 
 # # Serialize with Pickle
 # with open('facebook_prophet.pkl', 'wb') as pkl:
 #     pickle.dump(model, pkl)
 
-with open('facebook_prophet.pkl', 'rb') as pkl:
-    model = pickle.load(pkl)
+# with open('facebook_prophet.pkl', 'rb') as pkl:
+#     model = pickle.load(pkl)
 
 model.fit(train)
 
@@ -99,9 +99,13 @@ rmse_p = sqrt(mean_squared_error(y_test, y_pred))
 y_test_value = pd.DataFrame(y_test, index = pd.to_datetime(test['ds']),columns=['Actual'])
 y_pred_value = pd.DataFrame(y_pred, index = pd.to_datetime(test['ds']),columns=['Prediction'])
 
-# Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading
-with open('facebook_prophet.pkl', 'rb') as pkl:
-    m = pickle.load(pkl)
+
+m = Prophet(yearly_seasonality=True, \
+            daily_seasonality=False, weekly_seasonality=False)
+
+# # Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading
+# with open('facebook_prophet.pkl', 'rb') as pkl:
+#     m = pickle.load(pkl)
 
 m.fit(df_ts)
 future_new = m.make_future_dataframe(periods=12*5, freq='M') # next 5 years
