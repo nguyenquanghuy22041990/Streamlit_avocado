@@ -4,10 +4,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import metrics
-import numpy as np
-import pandas as pd
-import seaborn as sns
 
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error, mean_absolute_error
@@ -16,11 +12,11 @@ from math import sqrt
 from fbprophet import Prophet 
 from fbprophet.plot import add_changepoints_to_plot
 
-from pmdarima import auto_arima
+# from pmdarima import auto_arima
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
@@ -30,6 +26,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 from sklearn.linear_model import BayesianRidge
+
+import pickle
 
 st.markdown(f'''
     <style>
@@ -45,18 +43,11 @@ data = pd.read_csv("avocado.csv")
 st.title("Data Science Project")
 st.write("### Hass Avocado Price Prediction")
 # Upload file
-uploaded_file = st.file_uploader("Choose a file", type=['csv'])
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
-    data.to_csv("avocado_new.csv", index = False)
 
 # Filter Avocado - California
 # Make new dataframe from original dataframe: data
 
-# @st.cache(suppress_st_warning=True)
-
 df_ca = data[data['region'] == 'California']
-# df_ca['Date'] = df_ca['Date'].str[:-3]
 df_ca['Date'] = pd.to_datetime(df_ca['Date'])
 df_ca = df_ca[df_ca['type'] == 'organic']
 
@@ -75,15 +66,15 @@ train = df_ts.drop(df_ts.index[-10:])
 test = df_ts.drop(df_ts.index[0:-10])
 
 # Build model
-model = Prophet(yearly_seasonality=True, \
-            daily_seasonality=False, weekly_seasonality=False)
+# model = Prophet(yearly_seasonality=True, \
+#             daily_seasonality=False, weekly_seasonality=False)
 
 # # Serialize with Pickle
 # with open('facebook_prophet.pkl', 'wb') as pkl:
 #     pickle.dump(model, pkl)
 
-# with open('facebook_prophet.pkl', 'rb') as pkl:
-#     model = pickle.load(pkl)
+with open('facebook_prophet.pkl', 'rb') as pkl:
+    model = pickle.load(pkl)
 
 model.fit(train)
 
@@ -109,32 +100,33 @@ y_test_value = pd.DataFrame(y_test, index = pd.to_datetime(test['ds']),columns=[
 y_pred_value = pd.DataFrame(y_pred, index = pd.to_datetime(test['ds']),columns=['Prediction'])
 
 # Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading
-m = Prophet(yearly_seasonality=True, \
-            daily_seasonality=False, weekly_seasonality=False) 
+with open('facebook_prophet.pkl', 'rb') as pkl:
+    m = pickle.load(pkl)
+
 m.fit(df_ts)
 future_new = m.make_future_dataframe(periods=12*5, freq='M') # next 5 years
 forecast_new = m.predict(future_new)
 
 # Arima
-arima_organic_df = data.copy(deep=True)
-arima_organic_df = arima_organic_df.loc[(arima_organic_df['type'] == 'organic') & (arima_organic_df['region'] == 'California')]
-arima_organic_df['Date'] = pd.to_datetime(arima_organic_df['Date'])
-arima_organic_df['value'] = arima_organic_df['AveragePrice']
-arima_organic_df = arima_organic_df[['Date', 'value']]
-arima_organic_df.columns = ['date', 'value']
-arima_organic_df = arima_organic_df.sort_values(by=['date'])
-arima_organic_df.reset_index(drop=True, inplace=True)
-arima_organic_df.set_index('date', inplace=True)
-arima_organic_df.info()
+# arima_organic_df = data.copy(deep=True)
+# arima_organic_df = arima_organic_df.loc[(arima_organic_df['type'] == 'organic') & (arima_organic_df['region'] == 'California')]
+# arima_organic_df['Date'] = pd.to_datetime(arima_organic_df['Date'])
+# arima_organic_df['value'] = arima_organic_df['AveragePrice']
+# arima_organic_df = arima_organic_df[['Date', 'value']]
+# arima_organic_df.columns = ['date', 'value']
+# arima_organic_df = arima_organic_df.sort_values(by=['date'])
+# arima_organic_df.reset_index(drop=True, inplace=True)
+# arima_organic_df.set_index('date', inplace=True)
+# arima_organic_df.info()
 
-arima_model = auto_arima(arima_organic_df, start_p=2, d=1, 
-                        start_q=2, max_p=5,
-                        max_q=5, start_P=0, D=1, 
-                        start_Q=0, max_P=5,
-                        m=52, seasonal=True, 
-                        error_action='ignore', trace = True, 
-                        supress_warnings=True, 
-                        stepwise = True)
+# arima_model = auto_arima(arima_organic_df, start_p=2, d=1, 
+#                         start_q=2, max_p=5,
+#                         max_q=5, start_P=0, D=1, 
+#                         start_Q=0, max_P=5,
+#                         m=52, seasonal=True, 
+#                         error_action='ignore', trace = True, 
+#                         supress_warnings=True, 
+#                         stepwise = True)
 
 # # Serialize with Pickle
 # with open('arima.pkl', 'wb') as pkl:
@@ -145,10 +137,10 @@ arima_model = auto_arima(arima_organic_df, start_p=2, d=1,
 #     arima_model = pickle.load(pkl)
 
 
-arima_train = arima_organic_df[arima_organic_df.index.year < int(2017)]
-arima_test = arima_organic_df[arima_organic_df.index.year >= int(2017)]
+# arima_train = arima_organic_df[arima_organic_df.index.year < int(2017)]
+# arima_test = arima_organic_df[arima_organic_df.index.year >= int(2017)]
 
-arima_model.fit(arima_train)
+# arima_model.fit(arima_train)
 
 # For serialization:
 
@@ -187,53 +179,6 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                    test_size=0.3,
                                                    random_state=0)
 
-
-# Linear Regression
-pipe_LR = Pipeline([('scaler', StandardScaler()), ('lr', LinearRegression())])
-pipe_LR.fit(X_train, y_train)
-y_pred_LR = pipe_LR.predict(X_test)
-r2_score(y_test, y_pred_LR)
-
-mae_LR = mean_absolute_error(y_test, y_pred_LR)
-
-
-# Random Forest
-pipe_RF = Pipeline([('scaler', StandardScaler()), ('rf', RandomForestRegressor(n_estimators=500, 
-                                 min_samples_split=2, 
-                                 min_samples_leaf=1, 
-                                 max_features='sqrt', 
-                                 max_depth=None, 
-                                 bootstrap=False))])
-pipe_RF.fit(X_train, y_train)
-y_pred_RF = pipe_RF.predict(X_test)
-r2_score(y_test, y_pred_RF)
-
-mae_RF = mean_absolute_error(y_test, y_pred_RF)
-
-
-# XGB
-pipe_XGB = Pipeline([('scaler', StandardScaler()), ('rf', XGBRegressor(n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8))])
-pipe_XGB.fit(X_train, y_train)
-y_pred_XGB = pipe_XGB.predict(X_test)
-r2_score(y_test, y_pred_XGB)
-
-mae_XGB = mean_absolute_error(y_test, y_pred_XGB)
-
-
-# DecisionTreeRegressor
-pipe_DTR = Pipeline([('scaler', StandardScaler()), ('dtr', DecisionTreeRegressor(random_state = 0))])
-pipe_DTR.fit(X_train, y_train)
-y_pred_DTR = pipe_DTR.predict(X_test)
-r2_score(y_test, y_pred_DTR)
-
-mae_DTR = mean_absolute_error(y_test, y_pred_DTR)
-
-# BayesianRidge
-pipe_BR = Pipeline([('scaler', StandardScaler()), ('br', BayesianRidge())])
-pipe_BR.fit(X_train, y_train)
-y_pred_BR = pipe_BR.predict(X_test)
-r2_score(y_test, y_pred_BR)
-mae_BR = mean_absolute_error(y_test, y_pred_BR)
 
 #=====================================================================================================================================================
 
@@ -293,6 +238,54 @@ elif choice == "Build Project":
     st.pyplot(fig)
 
 elif choice == "1. USA's Avocado Average Prediction":
+
+    # Linear Regression
+    pipe_LR = Pipeline([('scaler', StandardScaler()), ('lr', LinearRegression())])
+    pipe_LR.fit(X_train, y_train)
+    y_pred_LR = pipe_LR.predict(X_test)
+    r2_score(y_test, y_pred_LR)
+
+    mae_LR = mean_absolute_error(y_test, y_pred_LR)
+
+
+    # Random Forest
+    pipe_RF = Pipeline([('scaler', StandardScaler()), ('rf', RandomForestRegressor(n_estimators=500, 
+                                    min_samples_split=2, 
+                                    min_samples_leaf=1, 
+                                    max_features='sqrt', 
+                                    max_depth=None, 
+                                    bootstrap=False))])
+    pipe_RF.fit(X_train, y_train)
+    y_pred_RF = pipe_RF.predict(X_test)
+    r2_score(y_test, y_pred_RF)
+
+    mae_RF = mean_absolute_error(y_test, y_pred_RF)
+
+
+    # XGB
+    pipe_XGB = Pipeline([('scaler', StandardScaler()), ('rf', XGBRegressor(n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8))])
+    pipe_XGB.fit(X_train, y_train)
+    y_pred_XGB = pipe_XGB.predict(X_test)
+    r2_score(y_test, y_pred_XGB)
+
+    mae_XGB = mean_absolute_error(y_test, y_pred_XGB)
+
+
+    # DecisionTreeRegressor
+    pipe_DTR = Pipeline([('scaler', StandardScaler()), ('dtr', DecisionTreeRegressor(random_state = 0))])
+    pipe_DTR.fit(X_train, y_train)
+    y_pred_DTR = pipe_DTR.predict(X_test)
+    r2_score(y_test, y_pred_DTR)
+
+    mae_DTR = mean_absolute_error(y_test, y_pred_DTR)
+
+    # BayesianRidge
+    pipe_BR = Pipeline([('scaler', StandardScaler()), ('br', BayesianRidge())])
+    pipe_BR.fit(X_train, y_train)
+    y_pred_BR = pipe_BR.predict(X_test)
+    r2_score(y_test, y_pred_BR)
+    mae_BR = mean_absolute_error(y_test, y_pred_BR)
+
     lst = [
     ['Linear Regression', 
         r2_score(y_test, y_pred_LR), 
@@ -384,47 +377,47 @@ elif choice == '2. Organic Avocado in California - Time Series':
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    arima_model.fit(arima_train)
+    # arima_model.fit(arima_train)
 
-    future_forecast = arima_model.predict(n_periods=len(arima_test))
+    # future_forecast = arima_model.predict(n_periods=len(arima_test))
 
-    future_forecast = pd.DataFrame(future_forecast, index = arima_test.index, columns=['Prediction'])
+    # future_forecast = pd.DataFrame(future_forecast, index = arima_test.index, columns=['Prediction'])
 
-    plt.figure(figsize=(15, 8))
-    plt.plot(arima_test, label='Average Price')
-    plt.plot(future_forecast, label='Prediction')
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(arima_test, label='Average Price')
+    # plt.plot(future_forecast, label='Prediction')
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
 
-    plt.figure(figsize=(15, 8))
-    plt.plot(arima_organic_df, label='Average Price')
-    plt.plot(future_forecast, label='Prediction', color="Red")
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(arima_organic_df, label='Average Price')
+    # plt.plot(future_forecast, label='Prediction', color="Red")
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
 
-    st.write("R2 score of Arima:")
-    st.write(r2_score(arima_test, future_forecast))
-    st.write("=> R2 score is not good!!!")
+    # st.write("R2 score of Arima:")
+    # st.write(r2_score(arima_test, future_forecast))
+    # st.write("=> R2 score is not good!!!")
 
-    future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
+    # future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
 
-    st.markdown("In the next 3 years:")
-    future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
-    datime_index = pd.date_range("2017-01-01", periods=(len(arima_test) + 52*3), freq="W")
-    future_3_years_forecast = pd.DataFrame(future_3_years_forecast, index = datime_index, columns=['Prediction'])
-    plt.figure(figsize=(15, 8))
-    plt.plot(arima_organic_df, label='Average Price')
-    plt.plot(future_3_years_forecast, label='Prediction', color="Red")
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # st.markdown("In the next 3 years:")
+    # future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
+    # datime_index = pd.date_range("2017-01-01", periods=(len(arima_test) + 52*3), freq="W")
+    # future_3_years_forecast = pd.DataFrame(future_3_years_forecast, index = datime_index, columns=['Prediction'])
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(arima_organic_df, label='Average Price')
+    # plt.plot(future_3_years_forecast, label='Prediction', color="Red")
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
     
-    st.markdown("According to Arima's prediction, Average Price of organic avocados in Carlifornia will fluctuate in the future")
+    # st.markdown("According to Arima's prediction, Average Price of organic avocados in Carlifornia will fluctuate in the future")
 
 
 elif choice == "3. California's Conventional Avocado - Average Prediction":
@@ -599,26 +592,26 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     conventional_forecast_new = conventional_m.predict(conventional_future_new)
 
     # Arima
-    conventional_arima_organic_df = data.copy(deep=True)
-    conventional_arima_organic_df = conventional_arima_organic_df.loc[(conventional_arima_organic_df['type'] == 'conventional') 
-    & (conventional_arima_organic_df['region'] == 'California')]
-    conventional_arima_organic_df['Date'] = pd.to_datetime(conventional_arima_organic_df['Date'])
-    conventional_arima_organic_df['value'] = conventional_arima_organic_df['AveragePrice']
-    conventional_arima_organic_df = conventional_arima_organic_df[['Date', 'value']]
-    conventional_arima_organic_df.columns = ['date', 'value']
-    conventional_arima_organic_df = conventional_arima_organic_df.sort_values(by=['date'])
-    conventional_arima_organic_df.reset_index(drop=True, inplace=True)
-    conventional_arima_organic_df.set_index('date', inplace=True)
-    conventional_arima_organic_df.info()
+    # conventional_arima_organic_df = data.copy(deep=True)
+    # conventional_arima_organic_df = conventional_arima_organic_df.loc[(conventional_arima_organic_df['type'] == 'conventional') 
+    # & (conventional_arima_organic_df['region'] == 'California')]
+    # conventional_arima_organic_df['Date'] = pd.to_datetime(conventional_arima_organic_df['Date'])
+    # conventional_arima_organic_df['value'] = conventional_arima_organic_df['AveragePrice']
+    # conventional_arima_organic_df = conventional_arima_organic_df[['Date', 'value']]
+    # conventional_arima_organic_df.columns = ['date', 'value']
+    # conventional_arima_organic_df = conventional_arima_organic_df.sort_values(by=['date'])
+    # conventional_arima_organic_df.reset_index(drop=True, inplace=True)
+    # conventional_arima_organic_df.set_index('date', inplace=True)
+    # conventional_arima_organic_df.info()
 
-    conventional_arima_model = auto_arima(conventional_arima_organic_df, start_p=2, d=1, 
-                            start_q=2, max_p=5,
-                            max_q=5, start_P=0, D=1, 
-                            start_Q=0, max_P=5,
-                            m=52, seasonal=True, 
-                            error_action='ignore', trace = True, 
-                            supress_warnings=True, 
-                            stepwise = True)
+    # conventional_arima_model = auto_arima(conventional_arima_organic_df, start_p=2, d=1, 
+    #                         start_q=2, max_p=5,
+    #                         max_q=5, start_P=0, D=1, 
+    #                         start_Q=0, max_P=5,
+    #                         m=52, seasonal=True, 
+    #                         error_action='ignore', trace = True, 
+    #                         supress_warnings=True, 
+    #                         stepwise = True)
 
     # # Serialize with Pickle
     # with open('conventional_arima.pkl', 'wb') as pkl:
@@ -629,8 +622,8 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     #     conventional_arima_model = pickle.load(pkl)
 
 
-    conventional_arima_train = conventional_arima_organic_df[conventional_arima_organic_df.index.year < int(2017)]
-    conventional_arima_test = conventional_arima_organic_df[conventional_arima_organic_df.index.year >= int(2017)]
+    # conventional_arima_train = conventional_arima_organic_df[conventional_arima_organic_df.index.year < int(2017)]
+    # conventional_arima_test = conventional_arima_organic_df[conventional_arima_organic_df.index.year >= int(2017)]
 
 
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. California\'s Conventional Avocado - Average Price future Prediction</p>'
@@ -674,47 +667,47 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    conventional_arima_model.fit(conventional_arima_train)
+    # conventional_arima_model.fit(conventional_arima_train)
 
-    conventional_future_forecast = conventional_arima_model.predict(n_periods=len(conventional_arima_test))
+    # conventional_future_forecast = conventional_arima_model.predict(n_periods=len(conventional_arima_test))
 
-    conventional_future_forecast = pd.DataFrame(conventional_future_forecast, index = conventional_arima_test.index, columns=['Prediction'])
+    # conventional_future_forecast = pd.DataFrame(conventional_future_forecast, index = conventional_arima_test.index, columns=['Prediction'])
 
-    plt.figure(figsize=(15, 8))
-    plt.plot(conventional_arima_test, label='Average Price')
-    plt.plot(conventional_future_forecast, label='Prediction')
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(conventional_arima_test, label='Average Price')
+    # plt.plot(conventional_future_forecast, label='Prediction')
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
 
-    plt.figure(figsize=(15, 8))
-    plt.plot(conventional_arima_organic_df, label='Average Price')
-    plt.plot(conventional_future_forecast, label='Prediction', color="Red")
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(conventional_arima_organic_df, label='Average Price')
+    # plt.plot(conventional_future_forecast, label='Prediction', color="Red")
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
 
-    st.write("R2 score of Arima:")
-    st.write(r2_score(conventional_arima_test, conventional_future_forecast))
-    st.write("=> R2 score is not good!!!")
+    # st.write("R2 score of Arima:")
+    # st.write(r2_score(conventional_arima_test, conventional_future_forecast))
+    # st.write("=> R2 score is not good!!!")
 
-    conventional_future_3_years_forecast = conventional_arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
+    # conventional_future_3_years_forecast = conventional_arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
 
-    st.markdown("In the next 3 years:")
-    conventional_future_3_years_forecast = arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
-    conventional_datime_index = pd.date_range("2017-01-01", periods=(len(conventional_arima_test) + 52*3), freq="W")
-    conventional_future_3_years_forecast = pd.DataFrame(conventional_future_3_years_forecast, index = conventional_datime_index, columns=['Prediction'])
-    plt.figure(figsize=(15, 8))
-    plt.plot(conventional_arima_organic_df, label='Average Price')
-    plt.plot(conventional_future_3_years_forecast, label='Prediction', color="Red")
-    plt.xticks(rotation='vertical')
-    plt.legend()
-    plt.show()
-    st.pyplot(plt)
+    # st.markdown("In the next 3 years:")
+    # conventional_future_3_years_forecast = arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
+    # conventional_datime_index = pd.date_range("2017-01-01", periods=(len(conventional_arima_test) + 52*3), freq="W")
+    # conventional_future_3_years_forecast = pd.DataFrame(conventional_future_3_years_forecast, index = conventional_datime_index, columns=['Prediction'])
+    # plt.figure(figsize=(15, 8))
+    # plt.plot(conventional_arima_organic_df, label='Average Price')
+    # plt.plot(conventional_future_3_years_forecast, label='Prediction', color="Red")
+    # plt.xticks(rotation='vertical')
+    # plt.legend()
+    # plt.show()
+    # st.pyplot(plt)
     
-    st.markdown("According to Arima's prediction, Average Price of conventional avocados in Carlifornia will increase in the future")
+    # st.markdown("According to Arima's prediction, Average Price of conventional avocados in Carlifornia will increase in the future")
 
 elif choice == "5. Find the trend of regions in the future":
     region_df = data.copy(deep=True)

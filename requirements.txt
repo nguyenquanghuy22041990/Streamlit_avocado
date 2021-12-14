@@ -2,10 +2,7 @@ streamlit
 numpy
 pandas
 matplotlib
-seaborn
 scikit-learn
 wheel ##==0.24.0##
 pystan==2.19.1.1
 fbprophet
-pmdarima
-xgboost
