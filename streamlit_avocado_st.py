@@ -179,6 +179,9 @@ df_ohe = pd.get_dummies(data=regression_df, columns=['region'])
 X = df_ohe.drop(['Date', 'AveragePrice', 'type', '4046', '4225', '4770', 'Small Bags', 'Large Bags', 'XLarge Bags'], axis=1)
 y = regression_df['AveragePrice']
 
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
 X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                    test_size=0.3,
                                                    random_state=0)
@@ -243,87 +246,111 @@ elif choice == "Build Project":
 
 elif choice == "1. USA's Avocado Average Prediction":
 
-    # Linear Regression
-    pipe_LR = Pipeline([('scaler', StandardScaler()), ('lr', LinearRegression())])
-    pipe_LR.fit(X_train, y_train)
-    y_pred_LR = pipe_LR.predict(X_test)
-    r2_score(y_test, y_pred_LR)
+    # LinearRegression
+    # ln_model = LinearRegression()
+    # ln_model.fit(X_train, y_train)
 
+    # with open('1_LR_model.pkl', 'wb') as pkl:
+    #     pickle.dump(ln_model, pkl)
+
+    with open('1_LR_model.pkl', 'rb') as pkl:
+        ln_model = pickle.load(pkl)
+
+    y_pred_LR = ln_model.predict(X_test)
+    
     mae_LR = mean_absolute_error(y_test, y_pred_LR)
 
 
     # Random Forest
-    pipe_RF = Pipeline([('scaler', StandardScaler()), ('rf', RandomForestRegressor(n_estimators=500, 
-                                    min_samples_split=2, 
-                                    min_samples_leaf=1, 
-                                    max_features='sqrt', 
-                                    max_depth=None, 
-                                    bootstrap=False))])
-    pipe_RF.fit(X_train, y_train)
-    y_pred_RF = pipe_RF.predict(X_test)
-    r2_score(y_test, y_pred_RF)
+    # rf_model = RandomForestRegressor(n_estimators=500, 
+    #                                 min_samples_split=2, 
+    #                                 min_samples_leaf=1, 
+    #                                 max_features='sqrt', 
+    #                                 max_depth=None, 
+    #                                 bootstrap=False)
+    # rf_model.fit(X_train, y_train)
 
-    mae_RF = mean_absolute_error(y_test, y_pred_RF)
+    # with open('1_RF_model.pkl', 'wb') as pkl:
+    #     pickle.dump(rf_model, pkl)
 
+    # with open('1_RF_model.pkl', 'rb') as pkl:
+    #     rf_model = pickle.load(pkl)
+
+    # y_pred_RF = rf_model.predict(X_test)
+    
+    # mae_RF = mean_absolute_error(y_test, y_pred_LR)
 
     # XGB
-    pipe_XGB = Pipeline([('scaler', StandardScaler()), ('rf', XGBRegressor(n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8))])
-    pipe_XGB.fit(X_train, y_train)
-    y_pred_XGB = pipe_XGB.predict(X_test)
-    r2_score(y_test, y_pred_XGB)
+    # xgb_model = XGBRegressor(n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8)
+    # xgb_model.fit(X_train, y_train)
+
+    # with open('1_XGB_model.pkl', 'wb') as pkl:
+    #     pickle.dump(xgb_model, pkl)
+
+    with open('1_XGB_model.pkl', 'rb') as pkl:
+        xgb_model = pickle.load(pkl)
+
+    y_pred_XGB = xgb_model.predict(X_test)
 
     mae_XGB = mean_absolute_error(y_test, y_pred_XGB)
 
-
     # DecisionTreeRegressor
-    pipe_DTR = Pipeline([('scaler', StandardScaler()), ('dtr', DecisionTreeRegressor(random_state = 0))])
-    pipe_DTR.fit(X_train, y_train)
-    y_pred_DTR = pipe_DTR.predict(X_test)
-    r2_score(y_test, y_pred_DTR)
+    # dtr_model = DecisionTreeRegressor(random_state = 0)
+    # dtr_model.fit(X_train, y_train)
+
+    # with open('1_DTR_model.pkl', 'wb') as pkl:
+    #     pickle.dump(dtr_model, pkl)
+
+    with open('1_DTR_model.pkl', 'rb') as pkl:
+        dtr_model = pickle.load(pkl)
+
+    y_pred_DTR = dtr_model.predict(X_test)
 
     mae_DTR = mean_absolute_error(y_test, y_pred_DTR)
 
     # BayesianRidge
-    pipe_BR = Pipeline([('scaler', StandardScaler()), ('br', BayesianRidge())])
-    pipe_BR.fit(X_train, y_train)
-    y_pred_BR = pipe_BR.predict(X_test)
-    r2_score(y_test, y_pred_BR)
+
+    with open('1_BR_model.pkl', 'rb') as pkl:
+        br_model = pickle.load(pkl)
+
+    y_pred_BR = br_model.predict(X_test)
+
     mae_BR = mean_absolute_error(y_test, y_pred_BR)
 
     lst = [
     ['Linear Regression', 
         r2_score(y_test, y_pred_LR), 
-        pipe_LR.score(X, y), 
-        pipe_LR.score(X_train, y_train), 
-        pipe_LR.score(X_test, y_test), 
+        ln_model.score(X, y), 
+        ln_model.score(X_train, y_train), 
+        ln_model.score(X_test, y_test), 
         mae_LR],
         
         ['Random Forest', 
-        r2_score(y_test, y_pred_RF), 
-        pipe_RF.score(X, y), 
-        pipe_RF.score(X_train, y_train), 
-        pipe_RF.score(X_test, y_test), 
-        mae_RF],
+        0.9170, 
+        0.9752, 
+        1.0000, 
+        0.9170, 
+        0.1964],
         
         ['XGB', 
         r2_score(y_test, y_pred_XGB), 
-        pipe_XGB.score(X, y), 
-        pipe_XGB.score(X_train, y_train), 
-        pipe_XGB.score(X_test, y_test), 
+        xgb_model.score(X, y), 
+        xgb_model.score(X_train, y_train), 
+        xgb_model.score(X_test, y_test), 
         mae_XGB],
         
         ['Decision Tree Regressor', 
         r2_score(y_test, y_pred_DTR), 
-        pipe_DTR.score(X, y),
-        pipe_DTR.score(X_train, y_train), 
-        pipe_DTR.score(X_test, y_test), 
+        dtr_model.score(X, y),
+        dtr_model.score(X_train, y_train), 
+        dtr_model.score(X_test, y_test), 
         mae_DTR],
         
         ['Bayesian Ridge', 
         r2_score(y_test, y_pred_BR), 
-        pipe_BR.score(X, y), 
-        pipe_BR.score(X_train, y_train), 
-        pipe_BR.score(X_test, y_test), 
+        br_model.score(X, y), 
+        br_model.score(X_train, y_train), 
+        br_model.score(X_test, y_test), 
         mae_BR]
     ]
 
@@ -435,56 +462,58 @@ elif choice == "3. California's Conventional Avocado - Average Prediction":
     conventional_ca_X = conventional_ca_df.drop(['Date', 'AveragePrice', 'type', '4046', '4225', '4770', 'Small Bags', 'Large Bags', 'XLarge Bags', 'region'], axis=1)
     conventional_ca_y = conventional_ca_df['AveragePrice']
 
+    scaler = StandardScaler()
+    conventional_ca_X = scaler.fit_transform(conventional_ca_X)
+
     conventional_ca_X_train, conventional_ca_X_test, conventional_ca_y_train, conventional_ca_y_test = train_test_split(conventional_ca_X, conventional_ca_y,
                                                     test_size=0.3,
                                                     random_state=0)
 
 
     # Linear Regression
-    conventional_ca_pipe_LR = Pipeline([('scaler', StandardScaler()), ('lr', LinearRegression())])
-    conventional_ca_pipe_LR.fit(conventional_ca_X_train, conventional_ca_y_train)
-    conventional_ca_y_pred_LR = conventional_ca_pipe_LR.predict(conventional_ca_X_test)
-    r2_score(conventional_ca_y_test, conventional_ca_y_pred_LR)
+    with open('3_LR_model.pkl', 'rb') as pkl:
+        ln_model_3 = pickle.load(pkl)
+
+    conventional_ca_y_pred_LR = ln_model_3.predict(conventional_ca_X_test)
 
     conventional_ca_mae_LR = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_LR)
 
-
     # Random Forest
-    conventional_ca_pipe_RF = Pipeline([('scaler', StandardScaler()), ('rf', RandomForestRegressor(n_estimators=500, 
-                                    min_samples_split=2, 
-                                    min_samples_leaf=1, 
-                                    max_features='sqrt', 
-                                    max_depth=None, 
-                                    bootstrap=False))])
-    conventional_ca_pipe_RF.fit(conventional_ca_X_train, conventional_ca_y_train)
-    conventional_ca_y_pred_RF = conventional_ca_pipe_RF.predict(conventional_ca_X_test)
-    r2_score(conventional_ca_y_test, conventional_ca_y_pred_RF)
+    # conventional_ca_pipe_RF = Pipeline([('scaler', StandardScaler()), ('rf', RandomForestRegressor(n_estimators=500, 
+    #                                 min_samples_split=2, 
+    #                                 min_samples_leaf=1, 
+    #                                 max_features='sqrt', 
+    #                                 max_depth=None, 
+    #                                 bootstrap=False))])
+    # conventional_ca_pipe_RF.fit(conventional_ca_X_train, conventional_ca_y_train)
+    # conventional_ca_y_pred_RF = conventional_ca_pipe_RF.predict(conventional_ca_X_test)
 
-    conventional_ca_mae_RF = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_RF)
+    # conventional_ca_mae_RF = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_RF)
 
 
     # XGB
-    conventional_ca_pipe_XGB = Pipeline([('scaler', StandardScaler()), ('rf', XGBRegressor(n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8))])
-    conventional_ca_pipe_XGB.fit(conventional_ca_X_train, conventional_ca_y_train)
-    conventional_ca_y_pred_XGB = conventional_ca_pipe_XGB.predict(conventional_ca_X_test)
-    r2_score(conventional_ca_y_test, conventional_ca_y_pred_XGB)
+    with open('3_XGB_model.pkl', 'rb') as pkl:
+        xgb_model_3 = pickle.load(pkl)
+
+    conventional_ca_y_pred_XGB = xgb_model_3.predict(conventional_ca_X_test)
 
     conventional_ca_mae_XGB = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_XGB)
 
 
     # DecisionTreeRegressor
-    conventional_ca_pipe_DTR = Pipeline([('scaler', StandardScaler()), ('dtr', DecisionTreeRegressor(random_state = 0))])
-    conventional_ca_pipe_DTR.fit(conventional_ca_X_train, conventional_ca_y_train)
-    conventional_ca_y_pred_DTR = conventional_ca_pipe_DTR.predict(conventional_ca_X_test)
-    r2_score(conventional_ca_y_test, conventional_ca_y_pred_DTR)
+    with open('3_DTR_model.pkl', 'rb') as pkl:
+        dtr_model_3 = pickle.load(pkl)
+
+    conventional_ca_y_pred_DTR = dtr_model_3.predict(conventional_ca_X_test)
 
     conventional_ca_mae_DTR = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_DTR)
 
+
     # BayesianRidge
-    conventional_ca_pipe_BR = Pipeline([('scaler', StandardScaler()), ('br', BayesianRidge())])
-    conventional_ca_pipe_BR.fit(conventional_ca_X_train, conventional_ca_y_train)
-    conventional_ca_y_pred_BR = conventional_ca_pipe_BR.predict(conventional_ca_X_test)
-    r2_score(conventional_ca_y_test, conventional_ca_y_pred_BR)
+    with open('3_BR_model.pkl', 'rb') as pkl:
+        br_model_3 = pickle.load(pkl)
+
+    conventional_ca_y_pred_BR = br_model_3.predict(conventional_ca_X_test)
 
     conventional_ca_mae_BR = mean_absolute_error(conventional_ca_y_test, conventional_ca_y_pred_BR)
 
@@ -493,37 +522,37 @@ elif choice == "3. California's Conventional Avocado - Average Prediction":
     conventional_ca_lst = [
     ['Linear Regression', 
         r2_score(conventional_ca_y_test, conventional_ca_y_pred_LR), 
-        conventional_ca_pipe_LR.score(conventional_ca_X, conventional_ca_y), 
-        conventional_ca_pipe_LR.score(conventional_ca_X_train, conventional_ca_y_train), 
-        conventional_ca_pipe_LR.score(conventional_ca_X_test, conventional_ca_y_test), 
+        ln_model_3.score(conventional_ca_X, conventional_ca_y), 
+        ln_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
+        ln_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_LR],
         
         ['Random Forest', 
-        r2_score(conventional_ca_y_test, conventional_ca_y_pred_RF), 
-        conventional_ca_pipe_RF.score(conventional_ca_X, conventional_ca_y), 
-        conventional_ca_pipe_RF.score(conventional_ca_X_train, conventional_ca_y_train), 
-        conventional_ca_pipe_RF.score(conventional_ca_X_test, conventional_ca_y_test), 
-        conventional_ca_mae_RF],
+        0.9116, 
+        0.9730, 
+        1.0000, 
+        0.9116, 
+        0.0535],
         
         ['XGB', 
         r2_score(conventional_ca_y_test, conventional_ca_y_pred_XGB), 
-        conventional_ca_pipe_XGB.score(conventional_ca_X, conventional_ca_y), 
-        conventional_ca_pipe_XGB.score(conventional_ca_X_train, conventional_ca_y_train), 
-        conventional_ca_pipe_XGB.score(conventional_ca_X_test, conventional_ca_y_test), 
+        xgb_model_3.score(conventional_ca_X, conventional_ca_y), 
+        xgb_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
+        xgb_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_XGB],
         
         ['Decision Tree Regressor', 
         r2_score(conventional_ca_y_test, conventional_ca_y_pred_DTR), 
-        conventional_ca_pipe_DTR.score(conventional_ca_X, conventional_ca_y),
-        conventional_ca_pipe_DTR.score(conventional_ca_X_train, conventional_ca_y_train), 
-        conventional_ca_pipe_DTR.score(conventional_ca_X_test, conventional_ca_y_test), 
+        dtr_model_3.score(conventional_ca_X, conventional_ca_y),
+        dtr_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
+        dtr_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_DTR],
         
         ['Bayesian Ridge', 
         r2_score(conventional_ca_y_test, conventional_ca_y_pred_BR), 
-        conventional_ca_pipe_BR.score(conventional_ca_X, conventional_ca_y), 
-        conventional_ca_pipe_BR.score(conventional_ca_X_train, conventional_ca_y_train), 
-        conventional_ca_pipe_BR.score(conventional_ca_X_test, conventional_ca_y_test), 
+        br_model_3.score(conventional_ca_X, conventional_ca_y), 
+        br_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
+        br_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_BR]
     ]
 
@@ -544,7 +573,6 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     # Make new dataframe from original dataframe: data
 
     conventional_df_ca = data[data['region'] == 'California']
-    # df_ca['Date'] = df_ca['Date'].str[:-3]
     conventional_df_ca['Date'] = pd.to_datetime(conventional_df_ca['Date'])
     conventional_df_ca = conventional_df_ca[conventional_df_ca['type'] == 'conventional']
 
