@@ -21,11 +21,6 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
 from sklearn.preprocessing import LabelEncoder
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
-from sklearn.linear_model import BayesianRidge
 
 import pickle
 
@@ -41,10 +36,10 @@ data = pd.read_csv("avocado.csv")
 #--------------
 # GUI
 st.title("Data Science Project")
-st.write("### Hass Avocado Price Prediction")
+st.write("### Hass Avocados Price Prediction")
 # Upload file
 
-# Filter Avocado - California
+# Filter Avocados - California
 # Make new dataframe from original dataframe: data
 
 df_ca = data[data['region'] == 'California']
@@ -111,6 +106,10 @@ m.fit(df_ts)
 future_new = m.make_future_dataframe(periods=12*5, freq='M') # next 5 years
 forecast_new = m.predict(future_new)
 
+region_df = data.copy(deep=True)
+region_df['Date'] = pd.to_datetime(region_df['Date'])
+sub_df = region_df[['Date', 'region', 'AveragePrice', 'type']]
+
 # Arima
 # arima_organic_df = data.copy(deep=True)
 # arima_organic_df = arima_organic_df.loc[(arima_organic_df['type'] == 'organic') & (arima_organic_df['region'] == 'California')]
@@ -153,7 +152,7 @@ forecast_new = m.predict(future_new)
 # with open('arima.pkl', 'wb') as pkl:
 #     pickle.dump(arima_model, pkl)
 
-#1. USA's Avocado Average Prediction
+#1. USA's Avocados Average Prediction
 
 regression_df = data.copy(deep=True)
 
@@ -189,7 +188,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
 
 #=====================================================================================================================================================
 
-# 3. Conventional Avocado in California
+# 3. Conventional Avocados in California
 
 
 # -----------------------------------------------------
@@ -197,11 +196,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
 # GUI
 
 menu = ["Business Objective", "Build Project", 
-"1. USA's Avocado Average Prediction", 
-"2. Organic Avocado in California - Time Series", 
-"3. California's Conventional Avocado - Average Prediction",
-"4. California's Conventional Avocadado - Time Series",
-"5. Find the trend of regions in the future"]
+"1. USA's Avocados Average Prediction", 
+"2. Organic Avocados in California - Time Series", 
+"3. California's Conventional Avocados - Average Prediction",
+"4. California's Conventional Avocados - Time Series",
+"5. Boise's Avocados trend",
+"6. Find the trend of regions in the future"]
 choice = st.sidebar.selectbox('Menu', menu)
 
 if choice == "Business Objective":
@@ -216,6 +216,13 @@ if choice == "Business Objective":
     kinh doanh.
     """)
     st.image("Hass_avocado_2.jpg")
+
+    # Upload file
+    uploaded_file = st.file_uploader("Choose a file", type=['csv'])
+    if uploaded_file is not None:
+        data = pd.read_csv(uploaded_file)
+        data.to_csv("avocado_new.csv", index = False)
+
 elif choice == "Build Project":
     st.subheader("Build Project")
     st.write("""
@@ -224,10 +231,8 @@ elif choice == "Build Project":
 
     st.dataframe(df_ts.head(3))
     st.dataframe(df_ts.tail(3))
-    st.text("Mean of Organic Avocado AveragePrice in California: " + str(round(df_ts['y'].mean(), 2)) + " USD")
-    st.write("""
-    ##### Build model ...
-    """"")
+    st.text("Mean of Organic Avocados AveragePrice in California: " + str(round(df_ts['y'].mean(), 2)) + " USD")
+    
     st.write("""
     ##### Calculate MAE/RMSE between expected and predicted values
     """)
@@ -244,7 +249,7 @@ elif choice == "Build Project":
     ax.legend()
     st.pyplot(fig)
 
-elif choice == "1. USA's Avocado Average Prediction":
+elif choice == "1. USA's Avocados Average Prediction":
 
     # LinearRegression
     # ln_model = LinearRegression()
@@ -354,26 +359,29 @@ elif choice == "1. USA's Avocado Average Prediction":
         mae_BR]
     ]
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. USA\'s Avocado Average Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. USA\'s Avocados Average Prediction</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    st.markdown("Bên dưới là kết quả của các models:")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">The table above show the result of models:</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
 
     result_table = pd.DataFrame(lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
 
     st.dataframe(result_table)
 
-    st.markdown("Ta sẽ chọn thuật toán XGB vì thuật toán này cho kết quả tốt nhất")
-
-elif choice == '2. Organic Avocado in California - Time Series':
-
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. California\'s Organic Avocado - Average Price future Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">We will choose XGB since this model has the best result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    st.subheader("Make new prediction for the future in Calinfornia")
-    st.write("##### Next 12 months")
+elif choice == '2. Organic Avocados in California - Time Series':
 
-    st.image("horizontal_grayline.jpeg")
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">2. Organic Avocados in California - Time Series</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+    st.subheader("Make new prediction for the future in California")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Next 12 months</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("horizontal_grayline.png")
 
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">FACEBOOK PROPHET</p>'
     st.markdown(new_title, unsafe_allow_html=True)
@@ -390,7 +398,9 @@ elif choice == '2. Organic Avocado in California - Time Series':
     df_new = forecast[['ds', 'yhat']].tail(12)
     st.table(df_new)
 
-    st.write("##### Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
     fig3 = m.plot(forecast_new)
     a = add_changepoints_to_plot(fig3.gca(), m, forecast_new)
     st.pyplot(fig3)
@@ -401,11 +411,24 @@ elif choice == '2. Organic Avocado in California - Time Series':
     color='red')
     ax.legend()
     st.pyplot(fig4)
-    st.markdown("Based on the above results, we can see that It's possible to expand the cultivation/production and trading of organic avocados")
 
-    st.image("horizontal_grayline.jpeg")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Based on the above results, we can see that It\'s possible to expand the cultivation/production and trading of organic avocados.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("horizontal_grayline.png")
 
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("1_Arima/1_Arima_Prediction.png")
+    st.image("1_Arima/2_Arima_Prediction.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">In the next 3 years:</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("1_Arima/1_Arima_next_3_years.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">According to Arima\'s prediction, Average Price of conventional avocados in Carlifornia will fluctuate in the future.</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # arima_model.fit(arima_train)
@@ -451,7 +474,7 @@ elif choice == '2. Organic Avocado in California - Time Series':
     # st.markdown("According to Arima's prediction, Average Price of organic avocados in Carlifornia will fluctuate in the future")
 
 
-elif choice == "3. California's Conventional Avocado - Average Prediction":
+elif choice == "3. California's Conventional Avocados - Average Prediction":
 
     #=================================
 
@@ -556,20 +579,22 @@ elif choice == "3. California's Conventional Avocado - Average Prediction":
         conventional_ca_mae_BR]
     ]
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. California\'s Conventional Avocado Average Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">3. California\'s Conventional Avocados - Average Prediction</p>'
     st.markdown(new_title, unsafe_allow_html=True)
-
-    st.markdown("Bên dưới là kết quả của các models:")
+    
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">The table above show the result of models:</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
 
     conventional_ca_result_table = pd.DataFrame(conventional_ca_lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
 
     st.dataframe(conventional_ca_result_table)
 
-    st.markdown("Ta sẽ chọn thuật toán XGB vì thuật toán này cho kết quả tốt nhất")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">We will choose XGB since this model has the best result</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
 
 
-elif choice == "4. California's Conventional Avocadado - Time Series":
-    # Filter Avocado - California
+elif choice == "4. California's Conventional Avocados - Time Series":
+    # Filter Avocados - California
     # Make new dataframe from original dataframe: data
 
     conventional_df_ca = data[data['region'] == 'California']
@@ -658,13 +683,15 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     # conventional_arima_test = conventional_arima_organic_df[conventional_arima_organic_df.index.year >= int(2017)]
 
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">1. California\'s Conventional Avocado - Average Price future Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">4. California\'s Conventional Avocados - Time Series</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    st.subheader("Make new prediction for the future in Calinfornia")
-    st.write("##### Next 12 months")
+    st.subheader("Make new prediction for the future in California")
 
-    st.image("horizontal_grayline.jpeg")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Next 12 months</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("horizontal_grayline.png")
 
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">FACEBOOK PROPHET</p>'
     st.markdown(new_title, unsafe_allow_html=True)
@@ -681,7 +708,9 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     conventional_df_new = conventional_forecast[['ds', 'yhat']].tail(12)
     st.table(conventional_df_new)
 
-    st.write("##### Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Long-term prediction for the next 5 years => Consider whether to expand cultivation/production, and trading.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
     fig3 = conventional_m.plot(forecast_new)
     a = add_changepoints_to_plot(fig3.gca(), conventional_m, forecast_new)
     st.pyplot(fig3)
@@ -692,11 +721,24 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     color='red')
     ax.legend()
     st.pyplot(fig4)
-    st.markdown("Based on the above results, we can see that It's possible to expand the cultivation/production and trading of organic avocados")
 
-    st.image("horizontal_grayline.jpeg")
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">Based on the above results, we can see that It\'s possible to expand the cultivation/production and trading of conventional avocados.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("horizontal_grayline.png")
 
     new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("3_Arima/1_Arima_Prediction.png")
+    st.image("3_Arima/2_Arima_Prediction.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">In the next 3 years:</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("3_Arima/1_Arima_next_3_years.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 28px;">According to Arima\'s prediction, Average Price of conventional avocados in Carlifornia will fluctuate in the future.</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # conventional_arima_model.fit(conventional_arima_train)
@@ -740,11 +782,10 @@ elif choice == "4. California's Conventional Avocadado - Time Series":
     # st.pyplot(plt)
     
     # st.markdown("According to Arima's prediction, Average Price of conventional avocados in Carlifornia will increase in the future")
+elif choice == "5. Boise's Avocados trend":
 
-elif choice == "5. Find the trend of regions in the future":
-    region_df = data.copy(deep=True)
-    region_df['Date'] = pd.to_datetime(region_df['Date'])
-    sub_df = region_df[['Date', 'region', 'AveragePrice', 'type']]
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">5. Boise\'s Avocados trend</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
 
     def find_trend_of_region(region, avocado_type):
         st.write("REGION: ", region)
@@ -769,7 +810,40 @@ elif choice == "5. Find the trend of regions in the future":
         fig.show()
         a = add_changepoints_to_plot(fig.gca(), m, forecast)
         st.pyplot(fig)
-        st.image("horizontal_grayline.jpeg")
+        st.image("horizontal_grayline.png")
+
+    find_trend_of_region('Boise', 'organic')
+    find_trend_of_region('Boise', 'conventional')
+
+elif choice == "6. Find the trend of regions in the future":
+
+    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 40px;">6. Find the trend of regions in the future</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    def find_trend_of_region(region, avocado_type):
+        st.write("REGION: ", region)
+        st.write("type: ", avocado_type)
+        data_df = sub_df.loc[(sub_df['type'] == avocado_type) & (sub_df['region'] == region)]
+        data_df = data_df.sort_values(by=['Date'])
+        data_df.reset_index(drop=True, inplace=True)
+        
+        data_df = data_df[['Date', 'AveragePrice']]
+        data_df.columns = ['ds', 'y']
+        
+        # Build model
+        m = Prophet(yearly_seasonality=True,
+            daily_seasonality=False, weekly_seasonality=False)
+        
+        m.fit(data_df)
+        future = m.make_future_dataframe(periods=12*5, freq='M') # next 5 years
+        forecast = m.predict(future)
+        
+        
+        fig = m.plot(forecast, figsize=(10, 12))
+        fig.show()
+        a = add_changepoints_to_plot(fig.gca(), m, forecast)
+        st.pyplot(fig)
+        st.image("horizontal_grayline.png")
 
     
     regions_list = sub_df.region.unique()
