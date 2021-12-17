@@ -207,13 +207,11 @@ choice = st.sidebar.selectbox('Menu', menu)
 if choice == "Business Objective":
     st.subheader("Business Objective")
     st.write("""
-    ###### Hiện tại: Công ty kinh doanh quả bơ ở rất nhiều vùng của nước Mỹ với 2 loại bơ là bơ thường và bơ hữu cơ, được đóng gói theo nhiều quy chuẩn (Small/Large/XLarge Bags), và có 3 PLU (Product Look Up) khác nhau (4046, 4225, 4770). Nhưng họ chưa có mô hình để dự đoán giá bơ cho việc mở rộng.
+    ###### At present, the company which sell avocado in lots of region in USA with 2 type including conventional and organic one, packed into 3 sizes (Small/Large/XLarge Bags with 3 PLU ( Product Look Up) – 4046, 4225,4770. However, they don’t have average price prediction for business expansion.
     """)
     st.write("""
-    #### => Mục tiêu/ Vấn đề:
-    Xây dựng mô hình dự đoán giá trung
-    bình của bơ “Hass” ở Mỹ => xem xét việc mở rộng sản xuất,
-    kinh doanh.
+    #### => Objective:
+    Build average price prediction model of “Hass” Avocado in USA and then consider to expand the business
     """)
     st.image("Hass_avocado_2.jpg")
 
@@ -226,7 +224,7 @@ if choice == "Business Objective":
 elif choice == "Build Project":
     import seaborn as sns
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 32px;">Build Project</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 32px;">Build Project</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     st.write("""
@@ -237,20 +235,20 @@ elif choice == "Build Project":
     st.dataframe(df_ts.tail(3))
     # st.text("Mean of Organic Avocados AveragePrice in California: " + str(round(df_ts['y'].mean(), 2)) + " USD")
     text = "Mean of Organic Avocados AveragePrice in California: " + str(round(df_ts['y'].mean(), 2)) + " USD"
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">' + text + '</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">' + text + '</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     text = "Calculate MAE/RMSE between expected and predicted values"
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">' + text + '</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">' + text + '</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     st.code("MAE: " + str(round(mae_p, 2)))
     st.code("RMSE: " + str(round(rmse_p, 2)))
     
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">This result shows that Prophet\'s RMSE and MAE are good enough to predict the organic avocado AveragePrice in California</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">This result shows that Prophet\'s RMSE and MAE are good enough to predict the organic avocado AveragePrice in California</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">Visualization: AveragePrice v AveragePrice Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">Visualization: AveragePrice v AveragePrice Prediction</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # Visualize the result
@@ -264,7 +262,7 @@ elif choice == "Build Project":
     st.image("horizontal_grayline.png")
 
     # Organic
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">Organic:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">Organic:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.boxplot(data = regression_df[regression_df['type'] == 'organic'],
@@ -276,7 +274,7 @@ elif choice == "Build Project":
     st.image("horizontal_grayline.png")
 
     # Conventional
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">Conventional:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">Conventional:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.boxplot(data = regression_df[regression_df['type'] == 'conventional'],
@@ -285,11 +283,11 @@ elif choice == "Build Project":
     plt.show()
     st.pyplot(plt)
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">\'AveragePrice\' was affected by \'Season\' (both in \'organic\' type and \'conventional\' type)</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">\'AveragePrice\' was affected by \'Season\' (both in \'organic\' type and \'conventional\' type)</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # Organic
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">Organic:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">Organic:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(20, 8))
     sns.boxplot(data=regression_df[regression_df["type"] == "organic"],
@@ -301,7 +299,7 @@ elif choice == "Build Project":
     st.image("horizontal_grayline.png")
 
     # Conventional
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">Conventional:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">Conventional:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     fig, ax = plt.subplots(figsize=(20, 8))
     sns.boxplot(data=regression_df[regression_df["type"] == "conventional"],
@@ -310,13 +308,13 @@ elif choice == "Build Project":
     plt.show()
     st.pyplot(plt)
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">* Some regions have high prices: Sanfrancisco, Chicago...</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">* Some regions have high prices: Sanfrancisco, Chicago...</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">* Some regions have low prices: Houston, PhoenixTucson...</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">* Some regions have low prices: Houston, PhoenixTucson...</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">=> \'AveragePrice\' was affected by \'region\' (both in \'organic\' type and \'conventional\' type)</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">=> \'AveragePrice\' was affected by \'region\' (both in \'organic\' type and \'conventional\' type)</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
 elif choice == "1. USA's Avocados Average Prediction":
@@ -429,10 +427,10 @@ elif choice == "1. USA's Avocados Average Prediction":
         mae_BR]
     ]
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">1. USA\'s Avocados Average Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">1. USA\'s Avocados Average Prediction</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above show the result of models:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above shows the result of models:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     result_table = pd.DataFrame(lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
@@ -444,7 +442,7 @@ elif choice == "1. USA's Avocados Average Prediction":
 
 elif choice == '2. Organic Avocados in California - Time Series':
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">2. Organic Avocados in California - Time Series</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">2. Organic Avocados in California - Time Series</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     st.subheader("Make new prediction for the future in California")
 
@@ -453,7 +451,7 @@ elif choice == '2. Organic Avocados in California - Time Series':
 
     st.image("horizontal_grayline.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">FACEBOOK PROPHET</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">FACEBOOK PROPHET</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     fig1 = model.plot(forecast)
@@ -487,18 +485,34 @@ elif choice == '2. Organic Avocados in California - Time Series':
 
     st.image("horizontal_grayline.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">ARIMA</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     st.image("1_Arima/1_Arima_Prediction.png")
     st.image("1_Arima/2_Arima_Prediction.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">In the next 3 years:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">In the next 5 years:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    st.image("1_Arima/1_Arima_next_3_years.png")
+    st.image("1_Arima/1_Arima_next_5_years.png")
 
     new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">According to Arima\'s prediction, Average Price of conventional avocados in Carlifornia will fluctuate in the future.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    rmse_tables = [
+        ['Facebook Prophet', 
+        0.203
+        ],
+        
+        ['ARIMA', 
+        0.357]
+    ]
+
+
+    rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
+    st.dataframe(rmse_tables_df)
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # arima_model.fit(arima_train)
@@ -529,7 +543,7 @@ elif choice == '2. Organic Avocados in California - Time Series':
 
     # future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
 
-    # st.markdown("In the next 3 years:")
+    # st.markdown("In the next 5 years:")
     # future_3_years_forecast = arima_model.predict(n_periods=(len(arima_test) + 52*3))
     # datime_index = pd.date_range("2017-01-01", periods=(len(arima_test) + 52*3), freq="W")
     # future_3_years_forecast = pd.DataFrame(future_3_years_forecast, index = datime_index, columns=['Prediction'])
@@ -649,10 +663,10 @@ elif choice == "3. California's Conventional Avocados - Average Prediction":
         conventional_ca_mae_BR]
     ]
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">3. California\'s Conventional Avocados - Average Prediction</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">3. California\'s Conventional Avocados - Average Prediction</p>'
     st.markdown(new_title, unsafe_allow_html=True)
     
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above show the result of models:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above shows the result of models:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     conventional_ca_result_table = pd.DataFrame(conventional_ca_lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
@@ -753,7 +767,7 @@ elif choice == "4. California's Conventional Avocados - Time Series":
     # conventional_arima_test = conventional_arima_organic_df[conventional_arima_organic_df.index.year >= int(2017)]
 
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">4. California\'s Conventional Avocados - Time Series</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">4. California\'s Conventional Avocados - Time Series</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     st.subheader("Make new prediction for the future in California")
@@ -763,7 +777,7 @@ elif choice == "4. California's Conventional Avocados - Time Series":
 
     st.image("horizontal_grayline.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">FACEBOOK PROPHET</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">FACEBOOK PROPHET</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     fig1 = conventional_model.plot(forecast)
@@ -797,18 +811,33 @@ elif choice == "4. California's Conventional Avocados - Time Series":
 
     st.image("horizontal_grayline.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">ARIMA</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">ARIMA</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     st.image("3_Arima/1_Arima_Prediction.png")
     st.image("3_Arima/2_Arima_Prediction.png")
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">In the next 3 years:</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">In the next 5 years:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    st.image("3_Arima/1_Arima_next_3_years.png")
+    st.image("3_Arima/1_Arima_next_5_years.png")
 
     new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">According to Arima\'s prediction, Average Price of conventional avocados in Carlifornia will fluctuate in the future.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    rmse_tables = [
+        ['Facebook Prophet', 
+        0.319
+        ],
+        
+        ['0.4752', 
+        0.35722]
+    ]
+
+    rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
+    st.dataframe(rmse_tables_df)
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # conventional_arima_model.fit(conventional_arima_train)
@@ -839,7 +868,7 @@ elif choice == "4. California's Conventional Avocados - Time Series":
 
     # conventional_future_3_years_forecast = conventional_arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
 
-    # st.markdown("In the next 3 years:")
+    # st.markdown("In the next 5 years:")
     # conventional_future_3_years_forecast = arima_model.predict(n_periods=(len(conventional_arima_test) + 52*3))
     # conventional_datime_index = pd.date_range("2017-01-01", periods=(len(conventional_arima_test) + 52*3), freq="W")
     # conventional_future_3_years_forecast = pd.DataFrame(conventional_future_3_years_forecast, index = conventional_datime_index, columns=['Prediction'])
@@ -854,7 +883,7 @@ elif choice == "4. California's Conventional Avocados - Time Series":
     # st.markdown("According to Arima's prediction, Average Price of conventional avocados in Carlifornia will increase in the future")
 elif choice == "5. Boise's Avocados trend":
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">5. Boise\'s Avocados trend</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">5. Boise\'s Avocados trend</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     def find_trend_of_region(region, avocado_type):
@@ -890,9 +919,40 @@ elif choice == "5. Boise's Avocados trend":
     find_trend_of_region('Boise', 'organic')
     find_trend_of_region('Boise', 'conventional')
 
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">ARIMA</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("Boise_Arima/1_Arima_Prediction.png")
+    st.image("Boise_Arima/2_Arima_Prediction.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">In the next 5 years:</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    st.image("Boise_Arima/Boise_Arima_next_5_years.png")
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">According to Arima\'s prediction, Average Price of conventional avocados in Carlifornia will fluctuate in the future.</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
+    rmse_tables = [
+        ['Facebook Prophet', 
+        0.246
+        ],
+        
+        ['ARIMA', 
+        0.588]
+    ]
+
+
+    rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
+    st.dataframe(rmse_tables_df)
+
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+
 elif choice == "6. Find the trend of regions in the future":
 
-    new_title = '<p style="font-family:sans-serif; color:Green; font-size: 30px;">6. Find the trend of regions in the future</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 30px;">6. Find the trend of regions in the future</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     def find_trend_of_region(region, avocado_type):
