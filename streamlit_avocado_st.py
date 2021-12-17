@@ -392,35 +392,30 @@ elif choice == "1. USA's Avocados Average Prediction":
 
     lst = [
     ['Linear Regression', 
-        r2_score(y_test, y_pred_LR), 
         ln_model.score(X, y), 
         ln_model.score(X_train, y_train), 
         ln_model.score(X_test, y_test), 
         mae_LR],
         
         ['Random Forest', 
-        0.9170, 
         0.9752, 
         1.0000, 
         0.9170, 
         0.1964],
         
         ['XGB', 
-        r2_score(y_test, y_pred_XGB), 
         xgb_model.score(X, y), 
         xgb_model.score(X_train, y_train), 
         xgb_model.score(X_test, y_test), 
         mae_XGB],
         
         ['Decision Tree Regressor', 
-        r2_score(y_test, y_pred_DTR), 
         dtr_model.score(X, y),
         dtr_model.score(X_train, y_train), 
         dtr_model.score(X_test, y_test), 
         mae_DTR],
         
         ['Bayesian Ridge', 
-        r2_score(y_test, y_pred_BR), 
         br_model.score(X, y), 
         br_model.score(X_train, y_train), 
         br_model.score(X_test, y_test), 
@@ -433,7 +428,7 @@ elif choice == "1. USA's Avocados Average Prediction":
     new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above shows the result of models:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    result_table = pd.DataFrame(lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
+    result_table = pd.DataFrame(lst, columns =['Model', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
 
     st.dataframe(result_table)
 
@@ -628,35 +623,30 @@ elif choice == "3. California's Conventional Avocados - Average Prediction":
 
     conventional_ca_lst = [
     ['Linear Regression', 
-        r2_score(conventional_ca_y_test, conventional_ca_y_pred_LR), 
         ln_model_3.score(conventional_ca_X, conventional_ca_y), 
         ln_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
         ln_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_LR],
         
         ['Random Forest', 
-        0.9116, 
         0.9730, 
         1.0000, 
         0.9116, 
         0.0535],
         
         ['XGB', 
-        r2_score(conventional_ca_y_test, conventional_ca_y_pred_XGB), 
         xgb_model_3.score(conventional_ca_X, conventional_ca_y), 
         xgb_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
         xgb_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_XGB],
         
         ['Decision Tree Regressor', 
-        r2_score(conventional_ca_y_test, conventional_ca_y_pred_DTR), 
         dtr_model_3.score(conventional_ca_X, conventional_ca_y),
         dtr_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
         dtr_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
         conventional_ca_mae_DTR],
         
         ['Bayesian Ridge', 
-        r2_score(conventional_ca_y_test, conventional_ca_y_pred_BR), 
         br_model_3.score(conventional_ca_X, conventional_ca_y), 
         br_model_3.score(conventional_ca_X_train, conventional_ca_y_train), 
         br_model_3.score(conventional_ca_X_test, conventional_ca_y_test), 
@@ -669,7 +659,7 @@ elif choice == "3. California's Conventional Avocados - Average Prediction":
     new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">The table above shows the result of models:</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
-    conventional_ca_result_table = pd.DataFrame(conventional_ca_lst, columns =['Model', 'R2 score', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
+    conventional_ca_result_table = pd.DataFrame(conventional_ca_lst, columns =['Model', 'full R2', 'train R2', 'test R2', 'Mean absolute error'])
 
     st.dataframe(conventional_ca_result_table)
 
