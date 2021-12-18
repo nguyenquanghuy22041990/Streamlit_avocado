@@ -507,7 +507,7 @@ elif choice == '2. Organic Avocados in California - Time Series':
     rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
     st.dataframe(rmse_tables_df)
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the better result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # arima_model.fit(arima_train)
@@ -827,7 +827,7 @@ elif choice == "4. California's Conventional Avocados - Time Series":
     rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
     st.dataframe(rmse_tables_df)
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the better result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
     # conventional_arima_model.fit(conventional_arima_train)
@@ -937,7 +937,7 @@ elif choice == "5. Boise's Avocados trend":
     rmse_tables_df = pd.DataFrame(rmse_tables, columns =['Model', 'RMSE'])
     st.dataframe(rmse_tables_df)
 
-    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the best result</p>'
+    new_title = '<p style="font-family:sans-serif; color:Blue; font-size: 25px;">We will choose Facebook Prophet since this model has the better result</p>'
     st.markdown(new_title, unsafe_allow_html=True)
 
 elif choice == "6. Find the trend of regions in the future":
